@@ -107,4 +107,5 @@ async def vente(ctx):
 async def on_ready():
     print(f"✅ Bot connecté en tant que {bot.user}")
 
+keep_alive()
 bot.run(token=token)
