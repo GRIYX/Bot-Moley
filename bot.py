@@ -20,8 +20,6 @@ bot = commands.Bot(command_prefix="?", intents=intents)
 
 CHANNEL_ID = 1347731990752788510  # Remplace par l'ID du salon de log
 
-import discord
-
 class VenteVehiculeModal1(discord.ui.Modal, title="Formulaire (1/2)"):
     def __init__(self):
         super().__init__(title="Formulaire de Vente (1/2)")
