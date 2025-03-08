@@ -101,6 +101,7 @@ async def say(ctx, *, message: str):
 async def vente(ctx):
     embed = discord.Embed(title="💰 Vente de Véhicule", description="En cas de vente de véhicule, le vendeur doit remplir ce formulaire", color=discord.Color.gold())
     view = VenteVehiculeView()
+    await ctx.message.delete()
     await ctx.send(embed=embed, view=view)
 
 @bot.event
