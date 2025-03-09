@@ -47,9 +47,11 @@ class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
         self.vendeur = vendeur
         self.acheteur = acheteur
         self.vehicule = vehicule
+        self.prix = prix
         self.add_item(discord.ui.TextInput(label="Type de véhicule", placeholder="Ex: Berline, SUV..."))
         self.add_item(discord.ui.TextInput(label="Plaque d'immatriculation", placeholder="Ex: AB-123-CD"))
         self.add_item(discord.ui.TextInput(label="Date et Heure", placeholder="JJ/MM/AAAA HH:MM"))
+        self.add_item(discord.ui.TextInput(label="Prix", placeholder="Prix du véhicule"))
 
     async def on_submit(self, interaction: discord.Interaction):
         embed = discord.Embed(title="💰 Vente de Véhicule", color=discord.Color.gold())
@@ -59,6 +61,7 @@ class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
         embed.add_field(name="Type", value=self.children[0].value, inline=True)
         embed.add_field(name="Plaque", value=self.children[1].value, inline=True)
         embed.add_field(name="Date & Heure", value=self.children[2].value, inline=False)
+        embed.add_field(name="Prix", value=self.prix, inline=True)
 
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
@@ -73,10 +76,11 @@ class OpenVenteVehiculeModal2(discord.ui.View):
         self.vendeur = vendeur
         self.acheteur = acheteur
         self.vehicule = vehicule
+        self.prix = prix
 
     @discord.ui.button(label="Continuer la vente", style=discord.ButtonStyle.primary)
     async def open_modal(self, interaction: discord.Interaction, button: discord.ui.Button):
-        await interaction.response.send_modal(VenteVehiculeModal2(self.vendeur, self.acheteur, self.vehicule))
+        await interaction.response.send_modal(VenteVehiculeModal2(self.vendeur, self.acheteur, self.vehicule, self.prix))
 
 
 class VenteVehiculeView(discord.ui.View):
