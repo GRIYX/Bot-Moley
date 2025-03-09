@@ -42,7 +42,7 @@ class VenteVehiculeModal1(discord.ui.Modal, title="Formulaire (1/2)"):
 
 
 class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
-    def __init__(self, vendeur, acheteur, vehicule):
+    def __init__(self, vendeur, acheteur, vehicule, prix):
         super().__init__(title="Formulaire de Vente (2/2)")
         self.vendeur = vendeur
         self.acheteur = acheteur
@@ -61,7 +61,7 @@ class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
         embed.add_field(name="Type", value=self.children[0].value, inline=True)
         embed.add_field(name="Plaque", value=self.children[1].value, inline=True)
         embed.add_field(name="Date & Heure", value=self.children[2].value, inline=False)
-        embed.add_field(name="Prix", value=self.children[3].value, inline=False)
+        embed.add_field(name="Prix", value=self.prix, inline=False)
 
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
