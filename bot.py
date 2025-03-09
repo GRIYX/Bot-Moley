@@ -87,24 +87,67 @@ class VenteVehiculeView(discord.ui.View):
     async def bouton_formulaire(self, interaction: discord.Interaction, button: discord.ui.Button):
         await interaction.response.send_modal(VenteVehiculeModal1())
 
-
 @bot.command()
 @commands.has_permissions(administrator=True)
-async def say(ctx, *, message: str):
+async def say2(ctx, *, message: str):
     """Envoie un message avec le bot"""
     await ctx.message.delete()
     await ctx.send(message)
 
-@bot.command()
-async def vente(ctx):
-    embed = discord.Embed(title="💰 Vente de Véhicule", description="En cas de vente de véhicule, le vendeur doit remplir ce formulaire", color=discord.Color.gold())
+
+@bot.tree.command(name="say", description="Répète un message")
+@app_commands.describe(message="Le message à répéter")
+@app_commands.checks.has_permissions(administrator=True)
+async def say(interaction: discord.Interaction, message: str):
+    await interaction.response.send_message(message)
+
+@say.error
+async def say_error(interaction: discord.Interaction, error):
+    if isinstance(error, app_commands.MissingPermissions):
+        await interaction.response.send_message("⛔ Tu n'as pas la permission d'utiliser cette commande.", ephemeral=True)
+
+@bot.tree.command(name="vente", description="Affiche le formulaire de vente de véhicule")
+@app_commands.checks.has_permissions(administrator=True)
+async def vente(interaction: discord.Interaction):
+    embed = discord.Embed(
+        title="💰 Vente de Véhicule",
+        description="En cas de vente de véhicule, le vendeur doit remplir ce formulaire",
+        color=discord.Color.gold()
+    )
     view = VenteVehiculeView()
-    await ctx.message.delete()
-    await ctx.send(embed=embed, view=view)
+    await interaction.response.send_message(embed=embed, view=view)
+
+@vente.error
+async def vente_error(interaction: discord.Interaction, error):
+    if isinstance(error, app_commands.MissingPermissions):
+        await interaction.response.send_message("⛔ Tu n'as pas la permission d'utiliser cette commande.", ephemeral=True)
+
+@bot.tree.command(name="mp", description="Envoie un message privé à un utilisateur.")
+@app_commands.describe(user="L'utilisateur à qui envoyer le message", message="Le message à envoyer en MP")
+@app_commands.checks.has_permissions(administrator=True)
+async def mp(interaction: discord.Interaction, user: discord.User, message: str):
+    """ Envoie un message privé à un utilisateur via commande slash. """
+    try:
+        await user.send(message)
+        await interaction.response.send_message(f"✅ Le message a été envoyé à **{user.name}**.", ephemeral=True)
+    except discord.Forbidden:
+        await interaction.response.send_message(f"⛔ Impossible d'envoyer un message privé à **{user.name}**. Ils ont peut-être désactivé les MP.", ephemeral=True)
+    except discord.HTTPException as e:
+        await interaction.response.send_message(f"❌ Une erreur est survenue : {e}", ephemeral=True)
+
+@mp.error
+async def mp_error(interaction: discord.Interaction, error):
+    if isinstance(error, app_commands.MissingPermissions):
+        await interaction.response.send_message("⛔ Tu n'as pas la permission d'utiliser cette commande.", ephemeral=True)
 
 @bot.event
 async def on_ready():
     print(f"✅ Bot connecté en tant que {bot.user}")
+    try:
+        synced = await bot.tree.sync()  # Synchronisation des commandes slash
+        print(f"Commandes synchronisées : {len(synced)}")
+    except Exception as e:
+        print(f"Erreur de synchronisation : {e}")
 
 keep_alive()
 bot.run(token=token)
