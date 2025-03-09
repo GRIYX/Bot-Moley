@@ -32,7 +32,7 @@ class VenteVehiculeModal1(discord.ui.Modal, title="Formulaire (1/2)"):
         acheteur = self.children[1].value
         vehicule = self.children[2].value
 
-        view = OpenVenteVehiculeModal2(vendeur, acheteur, vehicule)
+        view = OpenVenteVehiculeModal2(vendeur, acheteur, vehicule, prix)
 
         await interaction.response.send_message(
             "✅ Première partie complétée ! Cliquez sur le bouton ci-dessous pour continuer.",
@@ -71,7 +71,7 @@ class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
 
 
 class OpenVenteVehiculeModal2(discord.ui.View):
-    def __init__(self, vendeur, acheteur, vehicule):
+    def __init__(self, vendeur, acheteur, vehicule, prix):
         super().__init__(timeout=180)  # Le bouton reste actif pendant 3 minutes
         self.vendeur = vendeur
         self.acheteur = acheteur
