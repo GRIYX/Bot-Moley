@@ -32,8 +32,8 @@ class VenteVehiculeModal1(discord.ui.Modal, title="Formulaire (1/2)"):
         acheteur = self.children[1].value
         vehicule = self.children[2].value
 
-        view = OpenVenteVehiculeModal2(vendeur, acheteur, vehicule, prix)
-
+        # Now send to second modal, no need for `prix` at this stage
+        view = OpenVenteVehiculeModal2(vendeur, acheteur, vehicule)
         await interaction.response.send_message(
             "✅ Première partie complétée ! Cliquez sur le bouton ci-dessous pour continuer.",
             view=view,
@@ -42,18 +42,18 @@ class VenteVehiculeModal1(discord.ui.Modal, title="Formulaire (1/2)"):
 
 
 class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
-    def __init__(self, vendeur, acheteur, vehicule, prix):
+    def __init__(self, vendeur, acheteur, vehicule):
         super().__init__(title="Formulaire de Vente (2/2)")
         self.vendeur = vendeur
         self.acheteur = acheteur
         self.vehicule = vehicule
-        self.prix = prix
         self.add_item(discord.ui.TextInput(label="Type de véhicule", placeholder="Ex: Berline, SUV..."))
         self.add_item(discord.ui.TextInput(label="Plaque d'immatriculation", placeholder="Ex: AB-123-CD"))
         self.add_item(discord.ui.TextInput(label="Date et Heure", placeholder="JJ/MM/AAAA HH:MM"))
         self.add_item(discord.ui.TextInput(label="Prix", placeholder="Prix du véhicule"))
 
     async def on_submit(self, interaction: discord.Interaction):
+        prix = self.children[3].value  # This collects the 'prix' from the second modal
         embed = discord.Embed(title="💰 Vente de Véhicule", color=discord.Color.gold())
         embed.add_field(name="Vendeur", value=self.vendeur, inline=True)
         embed.add_field(name="Acheteur", value=self.acheteur, inline=True)
@@ -61,7 +61,7 @@ class VenteVehiculeModal2(discord.ui.Modal, title="Formulaire (2/2)"):
         embed.add_field(name="Type", value=self.children[0].value, inline=True)
         embed.add_field(name="Plaque", value=self.children[1].value, inline=True)
         embed.add_field(name="Date & Heure", value=self.children[2].value, inline=False)
-        embed.add_field(name="Prix", value=self.prix, inline=False)
+        embed.add_field(name="Prix", value=prix, inline=False)
 
         channel = bot.get_channel(CHANNEL_ID)
         if channel:
