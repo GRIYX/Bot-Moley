@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ui import View, Button
+from discord import app_commands
 import datetime
 import json
 import os
